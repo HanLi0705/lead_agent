@@ -1,0 +1,44 @@
+# Core AI/ML Framework Dependencies
+langchain==1.0.2
+langgraph==1.0.1
+langchain-openai==1.0.1
+langchain-core==1.0.1
+
+# HTTP and Networking
+httpx==0.28.1
+
+# OpenAI SDK (required for langchain-openai)
+openai==2.6.1
+
+# Additional LangGraph components
+langgraph-checkpoint==3.0.0
+langgraph-prebuilt==1.0.1
+langgraph-sdk==0.2.9
+
+# Google Generative AI (optional - for Gemini models)
+langchain-google-genai>=0.0.6
+
+# DeepAgents Framework (optional - if available)
+deepagents>=0.1.0
+
+# Development and Testing (optional)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+# mypy>=1.0.0
+
+# Utility Libraries (optional)
+# python-dotenv>=1.0.0
+# pydantic>=2.0.0
+
+# Python version requirement
+# Requires Python 3.8+
+
+# Installation Notes:
+# - Use `pip install -r requirements.txt` for standard installation
+# - For development with optional dependencies: `pip install -r requirements.txt`
+# - Comment out optional dependencies if not needed
+
+# Important: This file contains exact versions that are known to work together
+# For production, consider using a dependency lock file (requirements.lock)
