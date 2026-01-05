@@ -304,7 +304,7 @@ if __name__ == "__main__":
     # This is typically the path returned by download_gaia.py
     agent = SuperAgentWrapper(
         working_dir="/home/lihan/project/llm_application/han/dataset_gaia",  # GAIA数据集目录
-        auto_approve=False  # Set to True to auto-approve all tool calls
+        auto_approve=True  # Set to True to auto-approve all tool calls
     )
     
     # Test different difficulty levels
