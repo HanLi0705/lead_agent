@@ -221,7 +221,10 @@ class AgentMemoryMiddleware(AgentMiddleware):
             Path to the agent directory.
         """
         home_dir = Path.home()
-        return home_dir / ".superagent" / assistant_id
+        agent_dir = home_dir / ".superagent" / assistant_id
+        # Create directory if it doesn't exist
+        agent_dir.mkdir(parents=True, exist_ok=True)
+        return agent_dir
 
     def _get_user_agent_md_path(self) -> Path:
         """Get the path to the user agent.md file.
@@ -243,6 +246,10 @@ class AgentMemoryMiddleware(AgentMiddleware):
         # Check both locations
         preferred_path = self.project_root / ".superagent" / "agent.md"
         fallback_path = self.project_root / "agent.md"
+        
+        # Create .superagent directory if it doesn't exist
+        if not preferred_path.parent.exists():
+            preferred_path.parent.mkdir(parents=True, exist_ok=True)
         
         # Return the preferred path if it exists, otherwise fallback
         if preferred_path.exists():

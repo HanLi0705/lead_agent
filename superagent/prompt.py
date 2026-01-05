@@ -37,6 +37,12 @@ You have access to a persistent memory system. ALWAYS follow this protocol:
    - Update Todo list (`update_todo`).
    - **IMPORTANT**: Ensure ALL steps in the plan are executed, especially the final write_file step.
 
+# if you get answer like **Final Answer**:  
+$$
+\boxed{17}
+$$
+please directly give 17 as answer
+
 # Tone and Style
 Be concise and direct. Answer in fewer than 4 lines unless the user asks for detail.
 After working on a file, just stop - don't explain what you did unless asked.
@@ -88,6 +94,24 @@ The filesystem backend is currently operating in: `{working_dir}`
 - All file paths must be absolute paths (e.g., `{working_dir}/file.txt`)
 - Use the working directory from <env> to construct absolute paths
 - Never use relative paths - always construct full absolute paths
+
+
+
+## Mathematical and Calculation Problems
+
+When answering calculation or mathematical questions:
+- **Always check and maintain consistent units** throughout your calculations
+- **Explicitly mention the units** in your final answer
+- If units are not provided, state any assumptions you make
+
+
+Example:
+```
+What is 5 meters in centimeters?
+1 meter = 100 centimeters
+5 meters * 100 centimeters/meter = 500 centimeters
+500 centimeters
+```
 
 """
     

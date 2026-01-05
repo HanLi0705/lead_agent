@@ -2,7 +2,7 @@
 
 > **The most extensible AI agent framework for complex task automation**
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
 [![LangGraph](https://img.shields.io/badge/LangGraph-✅-green.svg)](https://langchain-ai.github.io/langgraph/)
 [![DeepAgents](https://img.shields.io/badge/DeepAgents-✅-orange.svg)](https://github.com/langchain-ai/deepagents)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -25,7 +25,7 @@
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.11+
 - [UV](https://github.com/astral-sh/uv) (not ready) or virtualenv
 
 ### Local Model Setup (Optional)
@@ -49,7 +49,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone and setup the project
 cd superagent
-uv sync
+uv sync --python 3.11
 uv run python main.py
 ```
 
@@ -65,6 +65,196 @@ pip install -r requirements.txt
 
 # Run the agent
 python main.py
+```
+
+### Download GAIA Benchmark Dataset
+
+The GAIA benchmark dataset is required for evaluation. Download it using the provided script:
+
+```bash
+# Activate virtual environment
+source /home/lihan/project/llm_application/.venv/bin/activate
+
+# Run the download script
+python script/download_gaia.py
+```
+
+**What gets downloaded:**
+- 119 files including PDFs, images (PNG/JPG), spreadsheets (XLSX/CSV), audio files (MP3), videos (MOV), documents (DOCX/PPTX), and archives (ZIP)
+- Dataset will be saved to `dataset/` directory in the project root
+- The `dataset/` directory is already added to `.gitignore`
+
+**Important Notes:**
+- The script automatically disables proxy settings to avoid connection issues
+- If you encounter proxy-related errors, the script handles them gracefully
+- Download may take several minutes depending on your network speed
+- The dataset includes various file formats for comprehensive testing
+
+## 📊 GAIA Evaluation
+
+### Evaluation Example
+
+```
+============================================================ 
+ GAIA Evaluation 
+ ============================================================ 
+ 
+ 
+ Configuration: 
+    Difficulty Level: 2 
+    Number of Samples: 1 
+    Dataset: validation 
+    Output Directory: ./gaia_results 
+ 
+ ============================================================ 
+ Step 1: Loading GAIA Dataset 
+ ============================================================ 
+    Loading GAIA dataset: 2023_level2/validation 
+ ✅ Loaded 86 examples from 2023_level2/validation 
+ ✅ Loaded 86 examples for evaluation 
+ ✅ GAIA dataset loaded successfully 
+    Data Source: gaia-benchmark/GAIA 
+    Split: validation 
+    Level: 2 
+    Total Samples: 86 
+    Examples with Files: 20 
+    Examples without Files: 66 
+ 
+ ============================================================ 
+ Step 2: Running GAIA Evaluation 
+ ============================================================ 
+ 🌟 Starting GAIA evaluation... 
+    Number of Samples: 1 
+ 
+ 🤖 Evaluating agent on 1 examples... 
+ ============================================================ 
+ 
+ ============================================================ 
+ [Sample 1/1] 
+ ============================================================ 
+ 
+ 📥 INPUT (Question): 
+ A paper about AI regulation that was originally submitted to arXiv.org in June 2022 shows a figure with three axes, where each axis has a label word at both ends. Which of these words is used to describe a type of society in a Physics and Society article submitted to arXiv.org on August 11, 2016? 
+ 
+ 📄 File: 
+ 📋 Level: 2 
+ 
+ 🤖 Running agent... 
+ 
+ ================================================================================ 
+ 🤖 AGENT INVOCATION LOG 
+ ================================================================================ 
+ 
+ 📅 Thread ID: d7de8410-ed9d-4099-89c8-926436496ab7 
+ 
+ 📥 INPUT MESSAGE: 
+    Role: system 
+    Content: You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER]. 
+ 
+ YOUR FINAL ANSWER should be a n... 
+ 
+ 📥 INPUT MESSAGE: 
+    Role: user 
+    Content: A paper about AI regulation that was originally submitted to arXiv.org in June 2022 shows a figure with three axes, where each axis has a label word at both ends. Which of these words is used to describe a type of society in a Physics and Society article submitted to arXiv.org on August 11, 2016? 
+ 
+ 🔧 Working Directory: /home/lihan/project/llm_application/han/dataset_gaia 
+ 🔧 Auto Approve: False 
+ 
+ 📤 OUTPUT MESSAGES: 
+ 
+    [Message 1] 
+    Type: SystemMessage 
+    Content: You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER]. 
+ 
+ YOUR FINAL ANSWER should be a number OR as few words as possible OR a comma separated list of numbers and/or strings. 
+ 
+ If you are asked for a number, don't use comma to write your number neither use units such as $ or percent sign unless specified otherwise. 
+ 
+ If you are asked for a string, don't use articles, neither abbreviations (e.g. for cities), and write the digits in plain text unless specified otherwise. 
+ 
+ If you are asked for a comma separated list, apply the above rules depending of whether the element to be put in the list is a number or a string. 
+ 
+    [Message 2] 
+    Type: HumanMessage 
+    Content: A paper about AI regulation that was originally submitted to arXiv.org in June 2022 shows a figure with three axes, where each axis has a label word at both ends. Which of these words is used to describe a type of society in a Physics and Society article submitted to arXiv.org on August 11, 2016? 
+ 
+    [Message 3] 
+    Type: AIMessage 
+    Content: 
+    Tool Calls: 1 
+       [1] task 
+           Args: {'description': 'Search arXiv.org for the AI regulation paper submitted in June 2022, extract the three-axis labels from its figure, then cross-reference these words with the Physics and Society article from August 11, 2016 to identify which label word describes a society type.', 'subagent_type': 'general-purpose'} 
+    Response Metadata: {'token_usage': {'completion_tokens': 859, 'prompt_tokens': 4096, 'total_tokens': 4955, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_provider': 'openai', 'model_name': 'qwen3:235b', 'system_fingerprint': 'fp_ollama', 'id': 'chatcmpl-676', 'finish_reason': 'tool_calls', 'logprobs': None} 
+ 
+ ✅ FINAL RESPONSE: 
+    Raw: ... 
+    Extracted FINAL ANSWER: 
+ ================================================================================ 
+ 
+ 
+ 📤 OUTPUT (Agent Response): 
+ 
+ 
+ ✅ Response received 
+ 
+ 🎯 Ground Truth: egalitarian 
+ 
+ ============================================================ 
+ 
+ ✅ GAIA evaluation completed 
+ 
+ ============================================================ 
+ 🎯 Evaluation Results 
+ ============================================================ 
+ 
+ ============================================================ 
+ GAIA BENCHMARK EVALUATION RESULTS 
+ ============================================================ 
+ Level: 2 
+ Total samples: 1 
+ Exact matches: 0 
+ Partial matches: 1 
+ 
+ Exact match rate: 0.00% 
+ Partial match rate: 100.00% 
+ ============================================================ 
+```
+
+### Running Evaluation
+
+To run the GAIA evaluation, use the example script:
+
+```bash
+python script/gaia_evaluation_example.py
+```
+
+### Important Notes
+- The evaluation tool automatically handles both exact and partial match calculations.
+- Results are exported in both GAIA official format and detailed JSON format for further analysis.
+- **Terminal 705 - 811 partial match**: This specific partial match functionality is no longer needed and has been removed from the evaluation logic.
+
+**Troubleshooting Proxy Issues:**
+
+If you encounter proxy connection errors like:
+```
+ProxyError('Unable to connect to proxy', NewConnectionError(...))
+```
+
+The download script automatically handles this by:
+1. Disabling proxy environment variables before download
+2. Using direct connection to HuggingFace servers
+3. Falling back to alternative download methods if needed
+
+If you still have issues, you can manually disable proxy:
+```bash
+# Temporarily disable proxy
+unset HTTP_PROXY
+unset HTTPS_PROXY
+unset http_proxy
+unset https_proxy
+
+# Then run the download script
+python script/download_gaia.py
 ```
 
 ## 📖 Usage
@@ -331,6 +521,10 @@ agent = create_simple_agent(
 
 ### Project Structure
 
+![Super Agent Structure](./docs/images/super_agent_structure.png)
+
+![Agent Technology Stack](./docs/images/agent_tech.png)
+
 ```
 superagent/
 ├── superagent/           # Core package
@@ -410,27 +604,18 @@ agent = create_superagent(
 
 ## 🚧 TODO List
 
-### High Priority
-- [ ] **Middleware System**: Implement extensible middleware architecture
-- [ ] **Subagent Framework**: Complete subagent delegation system
-- [ ] **Schema Validation**: Add input/output schema validation
-- [ ] **Configuration Management**: Enhanced config system with environment variables
-
-### Medium Priority
-- [ ] **More LLM Providers**: Add support for OpenAI, Anthropic, etc.
-- [ ] **Plugin System**: Develop plugin architecture for easy extensions
-- [ ] **Testing Suite**: Comprehensive test coverage
-- [ ] **Documentation**: API documentation and examples
-
-### Low Priority
-- [ ] **Web Interface**: Optional web-based agent interface
-- [ ] **Performance Optimization**: Caching and optimization
-- [ ] **Monitoring**: Advanced monitoring and metrics
-- [ ] **Deployment Tools**: Docker and cloud deployment support
+- [ ] Check if memory module is functioning correctly
+- [ ] Add BFCL and Hotpot_qa
+- [ ] Implement middleware for skill module system
+- [ ] Implement sandbox environment for safe execution
+- [ ] Upgrade to more advanced models
+- [ ] Implement internet search subagent
+- [ ] Optional web-based agent interface
+- [ ] Caching and optimization
+- [ ] Advanced monitoring and metrics
+- [ ] Docker and cloud deployment support
 
 ## 🔌 Extending SuperAgent
-
-### Adding Middleware (TODO)
 
 ```python
 # Planned middleware interface
@@ -465,7 +650,7 @@ In your existing llm.py file, add SuperAgent library imports and model configura
 
 ```python
 # Add imports at the top of your llm.py file
-from superagent.llm import build_qwen_llm, build_gemini_llm, get_llm
+from superagent.llm import get_llm
 
 # If you have existing local model configurations, add compatibility functions
 def get_superagent_llm(model_type="qwen", enable_memory=True):

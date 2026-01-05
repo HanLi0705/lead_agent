@@ -211,3 +211,9 @@ secrets.py
 # Package lock files (optional - include if you want to version control them)
 # package-lock.json
 # yarn.lock
+
+# Windows Zone.Identifier files
+*:Zone.Identifier
+
+# Dataset directory
+dataset_gaia/

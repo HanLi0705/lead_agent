@@ -18,6 +18,7 @@ from .prompt import get_system_prompt
 from .agent_memory import create_agent_memory_middleware
 
 
+
 logger = logging.getLogger("superagent")
 
 
@@ -81,11 +82,47 @@ def _format_shell_description(tool_call: ToolCall, _state: AgentState, _runtime:
     return f"Shell Command: {command}\nWorking Directory: {Path.cwd()}"
 
 
+def _format_web_search_description(
+    tool_call: ToolCall, _state: AgentState, _runtime: Runtime
+) -> str:
+    """Format web_search tool call for approval prompt."""
+    args = tool_call["args"]
+    query = args.get("query", "unknown")
+    max_results = args.get("max_results", 5)
+
+    return f"Query: {query}\nMax results: {max_results}\n\n⚠️  This will use Tavily API credits"
+
+
+def _format_fetch_url_description(
+    tool_call: ToolCall, _state: AgentState, _runtime: Runtime
+) -> str:
+    """Format fetch_url tool call for approval prompt."""
+    args = tool_call["args"]
+    url = args.get("url", "unknown")
+    timeout = args.get("timeout", 30)
+
+    return f"URL: {url}\nTimeout: {timeout}s\n\n⚠️  Will fetch and convert web content to markdown"
+
+
+def _format_execute_description(
+    tool_call: ToolCall, _state: AgentState, _runtime: Runtime
+) -> str:
+    """Format execute tool call for approval prompt."""
+    args = tool_call["args"]
+    command = args.get("command", "N/A")
+    return f"Execute Command: {command}\nLocation: Remote Sandbox"
+
+
 def _add_interrupt_on() -> dict[str, InterruptOnConfig]:
     """Configure human-in-the-loop interrupt_on settings for destructive tools."""
     shell_interrupt_config: InterruptOnConfig = {
         "allowed_decisions": ["approve", "reject"],
         "description": _format_shell_description,
+    }
+
+    execute_interrupt_config: InterruptOnConfig = {
+        "allowed_decisions": ["approve", "reject"],
+        "description": _format_execute_description,
     }
 
     write_file_interrupt_config: InterruptOnConfig = {
@@ -98,6 +135,16 @@ def _add_interrupt_on() -> dict[str, InterruptOnConfig]:
         "description": _format_edit_file_description,
     }
 
+    web_search_interrupt_config: InterruptOnConfig = {
+        "allowed_decisions": ["approve", "reject"],
+        "description": _format_web_search_description,
+    }
+
+    fetch_url_interrupt_config: InterruptOnConfig = {
+        "allowed_decisions": ["approve", "reject"],
+        "description": _format_fetch_url_description,
+    }
+
     task_interrupt_config: InterruptOnConfig = {
         "allowed_decisions": ["approve", "reject"],
         "description": _format_task_description,
@@ -105,8 +152,11 @@ def _add_interrupt_on() -> dict[str, InterruptOnConfig]:
 
     return {
         "shell": shell_interrupt_config,
+        "execute": execute_interrupt_config,
         "write_file": write_file_interrupt_config,
         "edit_file": edit_file_interrupt_config,
+        "web_search": web_search_interrupt_config,
+        "fetch_url": fetch_url_interrupt_config,
         "task": task_interrupt_config,
     }
 
@@ -120,6 +170,8 @@ def create_superagent(
     auto_approve: bool = False,
     enable_subagents: bool = True,
     enable_memory: bool = True,
+    enable_skills: bool = True,
+    enable_shell: bool = True,
     assistant_id: str = "superagent",
 ) -> tuple[Pregel, CompositeBackend]:
     """Create a superagent with flexible options.
@@ -132,6 +184,8 @@ def create_superagent(
         auto_approve: If True, automatically approves all tool calls without human confirmation.
         enable_subagents: Whether to enable subagent functionality (default True)
         enable_memory: Whether to enable long-term memory functionality (default True)
+        enable_skills: Whether to enable skills functionality (default True)
+        enable_shell: Whether to enable shell functionality (default True)
         assistant_id: Agent identifier for memory storage (default "superagent")
 
     Returns:
@@ -173,8 +227,10 @@ def create_superagent(
     # Configure subagents
     subagents = [] if not enable_subagents else None
 
-    # Configure memory middleware
+    # Configure middleware stack
     middleware = []
+    
+    # Add memory middleware if enabled
     if enable_memory:
         # Create agent memory middleware
         memory_middleware = create_agent_memory_middleware(
@@ -183,6 +239,8 @@ def create_superagent(
         )
         middleware.append(memory_middleware)
         logger.info(f"Memory middleware enabled for assistant: {assistant_id}")
+
+
 
     # Create the agent
     # create_deep_agent automatically adds:
@@ -211,6 +269,8 @@ def create_simple_agent(
     auto_approve: bool = False,
     enable_subagents: bool = True,
     enable_memory: bool = True,
+    enable_skills: bool = True,
+    enable_shell: bool = True,
     assistant_id: str = "superagent",
 ) -> Pregel:
     """Create a simple general-purpose agent
@@ -221,6 +281,8 @@ def create_simple_agent(
         auto_approve: Whether to auto-approve all tool calls (default False, requires manual approval for dangerous operations)
         enable_subagents: Whether to enable subagent functionality (default True)
         enable_memory: Whether to enable long-term memory functionality (default True)
+        enable_skills: Whether to enable skills functionality (default True)
+        enable_shell: Whether to enable shell functionality (default True)
         assistant_id: Agent identifier for memory storage (default "superagent")
 
     Returns:
@@ -232,6 +294,8 @@ def create_simple_agent(
         auto_approve=auto_approve,
         enable_subagents=enable_subagents,
         enable_memory=enable_memory,
+        enable_skills=enable_skills,
+        enable_shell=enable_shell,
         assistant_id=assistant_id,
     )
     return agent
