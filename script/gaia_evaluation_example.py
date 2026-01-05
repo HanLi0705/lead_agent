@@ -144,7 +144,8 @@ class SuperAgentWrapper:
             elif isinstance(msg, ToolMessage):
                 print(f"   Type: ToolMessage")
                 print(f"   Tool Call ID: {msg.tool_call_id}")
-                print(f"   Content: {msg.content[:200]}..." if len(msg.content) > 200 else f"   Content: {msg.content}")
+                # Print full content for debugging
+                print(f"   Content: {msg.content}")
                 
             elif isinstance(msg, dict):
                 print(f"   Type: dict")
@@ -309,7 +310,7 @@ if __name__ == "__main__":
     
     # Test different difficulty levels
     levels_to_test = [1, 2, 3]
-    max_samples_per_level = 1
+    max_samples_per_level = 3
     
     all_results = {}
     
