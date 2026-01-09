@@ -1,6 +1,7 @@
 """Agent management and creation for superagent"""
 
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,8 @@ from langgraph.runtime import Runtime
 
 from .prompt import get_system_prompt
 from .agent_memory import create_agent_memory_middleware
+from .skills.middleware import SkillsMiddleware
+from .middleware.shell import ShellMiddleware
 
 
 
@@ -225,11 +228,45 @@ def create_superagent(
         interrupt_on = _add_interrupt_on()
 
     # Configure subagents
-    subagents = [] if not enable_subagents else None
+    if not enable_subagents:
+        subagents = []
+    else:
+        # Explicitly configure only general-purpose subagent
+        subagents = [
+            {
+                "name": "general-purpose",
+                "description": "General purpose subagent for all tasks",
+                "system_prompt": "You are a general-purpose subagent that can handle various tasks including coding, research, and analysis. You will receive a task description from the main agent. Analyze this task carefully and execute it to the best of your ability. ",
+            }
+        ]
 
     # Configure middleware stack
     middleware = []
     
+    # Add skills if enabled
+    if enable_skills:
+        # Use relative path from the current file's directory (superagent/agent_skills)
+        project_skills_dir = Path(__file__).parent / "agent_skills"
+        user_skills_dir = Path.home() / ".superagent" / "skills"
+        
+        # Ensure directories exist
+        project_skills_dir.mkdir(parents=True, exist_ok=True)
+        user_skills_dir.mkdir(parents=True, exist_ok=True)
+        
+        # SkillMiddleware handles progressive disclosure (only injects name/description)
+        skills_middleware = SkillsMiddleware(
+            user_skills_dir=user_skills_dir,
+            project_skills_dir=project_skills_dir
+        )
+        middleware.append(skills_middleware)
+        
+        # Log loaded skills for debugging
+        from .skills.load import list_skills
+        loaded_skills = list_skills(user_skills_dir, project_skills_dir)
+        logger.info(f"Skills middleware enabled. Loaded {len(loaded_skills)} skills")
+        for s in loaded_skills:
+            logger.info(f" - Skill: {s['name']}")
+
     # Add memory middleware if enabled
     if enable_memory:
         # Create agent memory middleware
@@ -240,7 +277,17 @@ def create_superagent(
         middleware.append(memory_middleware)
         logger.info(f"Memory middleware enabled for assistant: {assistant_id}")
 
-
+    # Add shell middleware if enabled
+    if enable_shell:
+        # Create environment for shell commands
+        shell_env = os.environ.copy()
+        
+        shell_middleware = ShellMiddleware(
+            workspace_root=working_dir,
+            env=shell_env,
+        )
+        middleware.append(shell_middleware)
+        logger.info(f"Shell middleware enabled with working directory: {working_dir}")
 
     # Create the agent
     # create_deep_agent automatically adds:

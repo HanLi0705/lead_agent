@@ -9,6 +9,11 @@
 
 **SuperAgent** is a powerful, extensible AI agent framework built on top of LangGraph and DeepAgents. It provides a clean architecture for creating sophisticated AI agents that can handle complex tasks with middleware, subagents, and customizable prompts.
 
+## 🎬 Showcase
+
+- 🧩 **search -> analysis -> write report**: See how the agent intelligently discovers and applies domain-specific SOPs through progressive disclosure. [**View Execution Log**](./docs/ref_log/ref_log.log)
+- 🔍 **arXiv search skill execution**: See how the agent attempts to use the arXiv-search skill and handles tool limitations. [**View Skill Execution Log**](./docs/ref_log/skill_log.log)
+
 ## ✨ Features
 
 - 🏗️ **Extensible Architecture**: Designed as a library for easy extension
@@ -20,6 +25,30 @@
 - 📊 **Comprehensive Logging**: Detailed execution logs for debugging
 - 🧠 **Long-term Memory**: Hierarchical memory system with user and project memory
 - 🚀 **Production Ready**: Clean codebase following best practices
+- ⚠️ **Security Focused**: Built-in warnings and human-in-the-loop for sensitive operations
+
+## ⚠️ Security Warning: Shell Tool
+
+The **Shell Tool** is a powerful feature that allows the agent to execute commands directly on your local machine. Please be aware of the following:
+
+1. **Automatic Execution**: Once an agent decides to use the shell tool, the command will be executed automatically (unless manual approval is enabled). 
+2. **Local Access**: Commands run with the same permissions as the user running the agent. They can read, write, or delete files across your system.
+3. **No Safeguards**: By default, the shell tool has no built-in safeguards against destructive commands.
+
+### How to Disable Shell Access
+
+If you do not need shell access or want to run the agent in a more restricted mode, you can disable it during agent creation:
+
+```python
+# Disable shell tool when creating an agent
+agent = create_simple_agent(
+    model=llm,
+    enable_shell=False,  # Set this to False
+    # ... other parameters
+)
+```
+
+For advanced users, manual approval (`auto_approve=False`) is highly recommended when shell access is enabled.
 
 ## 🚀 Quick Start
 
@@ -126,78 +155,75 @@ python script/download_gaia.py
  🌟 Starting GAIA evaluation... 
     Number of Samples: 1 
  
- 🤖 Evaluating agent on 1 examples... 
- ============================================================ 
- 
- ============================================================ 
- [Sample 1/1] 
- ============================================================ 
- 
- 📥 INPUT (Question): 
- A paper about AI regulation that was originally submitted to arXiv.org in June 2022 shows a figure with three axes, where each axis has a label word at both ends. Which of these words is used to describe a type of society in a Physics and Society article submitted to arXiv.org on August 11, 2016? 
- 
- 📄 File: 
- 📋 Level: 2 
- 
- 🤖 Running agent... 
- 
- ================================================================================ 
- 🤖 AGENT INVOCATION LOG 
- ================================================================================ 
- 
- 📅 Thread ID: d7de8410-ed9d-4099-89c8-926436496ab7 
- 
- 📥 INPUT MESSAGE: 
-    Role: system 
-    Content: You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER]. 
- 
- YOUR FINAL ANSWER should be a n... 
- 
- 📥 INPUT MESSAGE: 
-    Role: user 
-    Content: A paper about AI regulation that was originally submitted to arXiv.org in June 2022 shows a figure with three axes, where each axis has a label word at both ends. Which of these words is used to describe a type of society in a Physics and Society article submitted to arXiv.org on August 11, 2016? 
- 
- 🔧 Working Directory: /home/lihan/project/llm_application/han/dataset_gaia 
- 🔧 Auto Approve: False 
- 
- 📤 OUTPUT MESSAGES: 
- 
-    [Message 1] 
-    Type: SystemMessage 
-    Content: You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER]. 
- 
- YOUR FINAL ANSWER should be a number OR as few words as possible OR a comma separated list of numbers and/or strings. 
- 
- If you are asked for a number, don't use comma to write your number neither use units such as $ or percent sign unless specified otherwise. 
- 
- If you are asked for a string, don't use articles, neither abbreviations (e.g. for cities), and write the digits in plain text unless specified otherwise. 
- 
- If you are asked for a comma separated list, apply the above rules depending of whether the element to be put in the list is a number or a string. 
- 
-    [Message 2] 
-    Type: HumanMessage 
-    Content: A paper about AI regulation that was originally submitted to arXiv.org in June 2022 shows a figure with three axes, where each axis has a label word at both ends. Which of these words is used to describe a type of society in a Physics and Society article submitted to arXiv.org on August 11, 2016? 
- 
-    [Message 3] 
-    Type: AIMessage 
-    Content: 
-    Tool Calls: 1 
-       [1] task 
-           Args: {'description': 'Search arXiv.org for the AI regulation paper submitted in June 2022, extract the three-axis labels from its figure, then cross-reference these words with the Physics and Society article from August 11, 2016 to identify which label word describes a society type.', 'subagent_type': 'general-purpose'} 
-    Response Metadata: {'token_usage': {'completion_tokens': 859, 'prompt_tokens': 4096, 'total_tokens': 4955, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_provider': 'openai', 'model_name': 'qwen3:235b', 'system_fingerprint': 'fp_ollama', 'id': 'chatcmpl-676', 'finish_reason': 'tool_calls', 'logprobs': None} 
- 
- ✅ FINAL RESPONSE: 
-    Raw: ... 
-    Extracted FINAL ANSWER: 
- ================================================================================ 
- 
- 
- 📤 OUTPUT (Agent Response): 
- 
- 
- ✅ Response received 
- 
- 🎯 Ground Truth: egalitarian 
+  Running agent...
+
+================================================================================
+🤖 AGENT INVOCATION LOG
+================================================================================
+
+📅 Thread ID: 42b67b4c-60c1-41bc-b113-ccb229ea291e
+
+📥 INPUT MESSAGE:
+   Role: system
+   Content: You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER].
+
+YOUR FINAL ANSWER should be a n...
+
+📥 INPUT MESSAGE:
+   Role: user
+   Content: How many studio albums were published by Mercedes Sosa between 2000 and 2009 (included)? You can use the latest 2022 version of english wikipedia.
+
+🔧 Working Directory: /home/lihan/project/llm_application/han/dataset_gaia
+🔧 Auto Approve: True
+
+📤 OUTPUT MESSAGES:
+
+   [Message 1]
+   Type: SystemMessage
+   Content: You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER].
+
+YOUR FINAL ANSWER should be a number OR as few words as possible OR a comma separated list of numbers and/or strings.
+
+If you are asked for a number, don't use comma to write your number neither use units such as $ or percent sign unless specified otherwise.
+
+If you are asked for a string, don't use articles, neither abbreviations (e.g. for cities), and write the digits in plain text unless specified otherwise.
+
+If you are asked for a comma separated list, apply the above rules depending of whether the element to be put in the list is a number or a string.
+
+   [Message 2]
+   Type: HumanMessage
+   Content: How many studio albums were published by Mercedes Sosa between 2000 and 2009 (included)? You can use the latest 2022 version of english wikipedia.
+
+   [Message 3]
+   Type: AIMessage
+   Content: 
+   Tool Calls: 1
+      [1] task
+          Args: {'description': 'Research the number of studio albums published by Mercedes Sosa between 2000 and 2009 (inclusive) using the latest 2022 version of English Wikipedia.', 'subagent_type': 'general-purpose'}
+   Response Metadata: {'token_usage': {'completion_tokens': 814, 'prompt_tokens': 4096, 'total_tokens': 4910, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_provider': 'openai', 'model_name': 'qwen3:235b', 'system_fingerprint': 'fp_ollama', 'id': 'chatcmpl-655', 'finish_reason': 'tool_calls', 'logprobs': None}
+
+   [Message 4]
+   Type: ToolMessage
+   Tool Call ID: call_vartw9i5
+   Content: I don't have access to external resources like Wikipedia or the internet to perform this research. The tools available to me are limited to file system operations (listing directories, reading/writing files, etc.). To answer this question, I would need access to a music database or Wikipedia's API, which isn't available in the current toolset.
+
+   [Message 5]
+   Type: AIMessage
+   Content: I currently don't have access to external resources like Wikipedia or internet databases to perform this research. My capabilities are limited to file system operations (reading/writing files, searching content, etc.) and isolated task execution through subagents. Would you like me to help with something that can be addressed using these available tools?
+   Response Metadata: {'token_usage': {'completion_tokens': 302, 'prompt_tokens': 4096, 'total_tokens': 4398, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_provider': 'openai', 'model_name': 'qwen3:235b', 'system_fingerprint': 'fp_ollama', 'id': 'chatcmpl-20', 'finish_reason': 'stop', 'logprobs': None}
+
+✅ FINAL RESPONSE:
+   Raw: I currently don't have access to external resources like Wikipedia or internet databases to perform this research. My capabilities are limited to file system operations (reading/writing files, searchi...
+   Extracted FINAL ANSWER: I currently don't have access to external resources like Wikipedia or internet databases to perform this research. My capabilities are limited to file system operations (reading/writing files, searching content, etc.) and isolated task execution through subagents. Would you like me to help with something that can be addressed using these available tools?
+================================================================================
+
+
+📤 OUTPUT (Agent Response):
+I currently don't have access to external resources like Wikipedia or internet databases to perform this research. My capabilities are limited to file system operations (reading/writing files, searching content, etc.) and isolated task execution through subagents. Would you like me to help with something that can be addressed using these available tools?
+
+✅ Response received
+
+🎯 Ground Truth: 3
  
  ============================================================ 
  
@@ -606,7 +632,7 @@ agent = create_superagent(
 
 - [ ] Check if memory module is functioning correctly
 - [ ] Add BFCL and Hotpot_qa
-- [ ] Implement middleware for skill module system
+- [x] Implement middleware for skill module system
 - [ ] Implement sandbox environment for safe execution
 - [ ] Upgrade to more advanced models
 - [ ] Implement internet search subagent

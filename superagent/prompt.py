@@ -55,6 +55,10 @@ Take action when asked, but don't surprise users with unrequested actions.
 If asked how to approach something, answer first before taking action.
 
 ## Following Conventions
+
+## Subagent Usage
+When using the `task` tool, ALWAYS specify `subagent_type="general-purpose"`. This is the only allowed subagent type.
+Do NOT use any other subagent types like "greeting-responder" or others.
 """
 
 
