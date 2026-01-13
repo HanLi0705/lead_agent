@@ -96,6 +96,54 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## 🧰 DeepAgents CLI Installation Guide
+
+The DeepAgents CLI lives inside the `deepagents-cli/` directory of this repo and can reuse the same virtual environment.
+
+### 1. Install dependencies and enter the submodule
+
+```bash
+cd project_path
+source .venv/bin/activate
+pip install -r requirements.txt
+cd deepagents-cli
+```
+
+### 2. Install the CLI in editable mode (recommended)
+
+```bash
+pip install -e .
+```
+
+This registers the `deepagents_cli` entry point so you can start it with `python -m deepagents_cli` or `deepagents-cli`.
+
+### 3. Configure key environment variables
+
+```bash
+# Default model when --model is omitted
+export QWEN_MODEL=qwen3:235b
+
+# Tell the CLI to use the local Qwen builder defined in superagent
+export USE_LOCAL_QWEN=true
+
+# (Optional) Enable Tavily-powered web search
+export TAVILY_API_KEY=your_tavily_key
+```
+
+If you connect to an internal DGX endpoint with a self-signed cert, copy the PEM file to `superagent/ollama-api-fullchain_dgx.pem` and ensure `ollama-api.tech.emea.porsche.biz` is reachable.
+
+### 4. Launch the CLI
+
+```bash
+# From the deepagents-cli directory
+python -m deepagents_cli --model qwen3:235b
+```
+
+Common flags:
+- `--model qwen3-vl:235b`: enable the multimodal Qwen VL model
+- `--sandbox none`: explicitly disable the sandbox (default)
+- `--auto-approve`: automatically approve tool calls when appropriate
+
 ### Download GAIA Benchmark Dataset
 
 The GAIA benchmark dataset is required for evaluation. Download it using the provided script:

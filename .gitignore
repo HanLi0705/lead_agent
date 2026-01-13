@@ -212,6 +212,7 @@ secrets.py
 
 # Dataset directory
 dataset_gaia/
-deepagents-cli/
+# deepagents-cli/
 logs/
 .trae/
+.codebuddy/

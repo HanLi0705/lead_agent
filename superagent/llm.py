@@ -25,7 +25,8 @@ def build_qwen_llm() -> ChatOpenAI:
         model="qwen3:235b",
         temperature=0, 
         max_tokens=65536,
-        http_client=httpx.Client(verify=ssl_context, timeout=300.0) if ssl_context else None,
+        http_client=httpx.Client(verify=ssl_context, timeout=60.0) if ssl_context else httpx.Client(timeout=60.0),
+        http_async_client=httpx.AsyncClient(verify=ssl_context, timeout=60.0) if ssl_context else httpx.AsyncClient(timeout=60.0),
         streaming=False
     )
 
@@ -42,7 +43,8 @@ def build_qwenvl_llm() -> ChatOpenAI:
         model="qwen3-vl:235b",
         temperature=0, 
         max_tokens=65536,
-        http_client=httpx.Client(verify=ssl_context, timeout=300.0) if ssl_context else None,
+        http_client=httpx.Client(verify=ssl_context, timeout=60.0) if ssl_context else httpx.Client(timeout=60.0),
+        http_async_client=httpx.AsyncClient(verify=ssl_context, timeout=60.0) if ssl_context else httpx.AsyncClient(timeout=60.0),
         streaming=False
     )
 
@@ -60,6 +62,20 @@ def get_llm(model_type: str = "qwen") -> Any:
     if model_type.lower() == "gemini":
         return build_gemini_llm()
     return build_qwen_llm()
+
+
+def build_qwenvl32b_llm() -> ChatOpenAI:
+
+    return ChatOpenAI(
+        api_key="dummy-key",
+        base_url="https://prodphmjps001sha.tech.emea.porsche.biz:8000/v1",
+        model="cpatonn-mirror/Qwen3-VL-32B-Thinking-AWQ-4bit",
+        temperature=0,
+        max_tokens=8192,
+        http_client=httpx.Client(verify=False),
+        streaming=False
+    )
+ 
 
 # # Default instances
 # llm_qwen = build_qwen_llm()

@@ -32,6 +32,10 @@ deepagents>=0.1.0
 # python-dotenv>=1.0.0
 # pydantic>=2.0.0
 
+# CLI / Text UX helpers
+markdownify==0.12.1
+prompt_toolkit==3.0.47
+
 # Python version requirement
 # Requires Python 3.8+
 
