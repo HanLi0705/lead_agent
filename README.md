@@ -96,6 +96,73 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## 🤖 Mini-Agent Local Model Usage Guide
+
+![Mini-Agent CLI](docs/images/mini_agent_cli.png)
+
+`Mini-Agent` is a lightweight agent framework integrated in the `Mini-Agent-main/` directory. We have extensively modified it to support locally deployed models like Qwen and to handle complex internal SSL environments.
+
+### 1. Installation & Setup
+
+Navigate to the `Mini-Agent-main` directory and install the required dependencies:
+
+```bash
+cd Mini-Agent-main
+# Recommended: using uv
+uv sync
+# Or using pip
+pip install -e .
+```
+
+### 2. Standard Configuration Setup
+
+You can set up the configuration file automatically or manually.
+
+#### Option A: Automatic Setup (Recommended)
+Run the following command to automatically create the config directory and download the default configuration files:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MiniMax-AI/Mini-Agent/main/scripts/setup-config.sh | bash
+```
+
+#### Option B: Manual Setup
+If you prefer manual setup, follow these steps:
+
+```bash
+# Create the user config directory
+mkdir -p ~/.mini-agent/config
+
+# Copy the example configuration (assuming you are in Mini-Agent-main directory)
+cp mini_agent/config/config-example.yaml ~/.mini-agent/config/config.yaml
+```
+
+### 3. Configure Local Model (Special Case)
+
+For local models (e.g., deployed via Ollama or vLLM), edit `~/.mini-agent/config/config.yaml` with the following:
+
+```yaml
+# ~/.mini-agent/config/config.yaml
+api_base: "https://ollama-api.tech.emea.porsche.biz/v1"
+api_key: "dummy-key" # Local models usually don't need a real key, but the framework requires a non-empty string
+model: "qwen3:235b"  # Replace with your local model name
+
+# SSL Configuration (if using self-signed certificates)
+verify: true
+ssl_ca_path: "superagent/ollama-api-fullchain_dgx.pem"
+```
+
+> **Note**: We have updated the core logic to support `ssl_ca_path` and `verify` fields, and added compatibility for the standard `reasoning_content` field, ensuring that the local model's "Thinking" process is correctly displayed.
+
+### 4. Launch Mini-Agent
+
+Start the interactive CLI using the following command:
+
+```bash
+uv run python -m mini_agent.cli
+```
+
+Inside the CLI, you can use the `/skill` command to list all available Claude Skills.
+
 ## 🧰 DeepAgents CLI Installation Guide
 
 The DeepAgents CLI lives inside the `deepagents-cli/` directory of this repo and can reuse the same virtual environment.

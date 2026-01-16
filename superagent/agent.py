@@ -287,6 +287,11 @@ def create_superagent(
             env=shell_env,
         )
         middleware.append(shell_middleware)
+        logger.warning(
+            "SECURITY WARNING: Shell tool is enabled. The agent can execute arbitrary commands on your local machine. "
+            "Shell commands will execute automatically once the agent invokes them. "
+            "To disable this feature, set enable_shell=False when creating the agent."
+        )
         logger.info(f"Shell middleware enabled with working directory: {working_dir}")
 
     # Create the agent

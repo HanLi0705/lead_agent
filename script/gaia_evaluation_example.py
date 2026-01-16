@@ -15,7 +15,7 @@ parent_dir = script_dir.parent
 sys.path.insert(0, str(parent_dir))
 
 from superagent import create_simple_agent
-from superagent.llm import get_llm
+from superagent.llm import get_llm, build_qwenvl_llm, build_qwen_llm
 
 # GAIA official system prompt (from paper) with enhanced tool usage instructions
 GAIA_SYSTEM_PROMPT = """You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER].
@@ -44,7 +44,7 @@ class SuperAgentWrapper:
             auto_approve: Whether to auto-approve all tool calls
         """
         # Use build_qwen_llm to get the Qwen model
-        self.model = get_llm()
+        self.model = build_qwen_llm()
         self.working_dir = working_dir or str(Path.cwd())
         self.auto_approve = auto_approve
         self.current_file_path = None
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     
     # Test different difficulty levels
     levels_to_test = [1, 2, 3]
-    max_samples_per_level = 3
+    max_samples_per_level = 5
     
     all_results = {}
     
