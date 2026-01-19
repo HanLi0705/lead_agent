@@ -13,6 +13,7 @@
 
 - 🧩 **search -> analysis -> write report**: See how the agent intelligently discovers and applies domain-specific SOPs through progressive disclosure. [**View Execution Log**](./docs/ref_log/ref_log.log)
 - 🔍 **arXiv search skill execution**: See how the agent attempts to use the arXiv-search skill and handles tool limitations. [**View Skill Execution Log**](./docs/ref_log/skill_log.log)
+- 🤖 **Mini-Agent GAIA Evaluation**: Observe the Mini-Agent's thinking process and tool usage during a GAIA benchmark task. [**View Mini-Agent Log**](./docs/ref_log/mini-agent.log)
 
 ## ✨ Features
 
@@ -99,6 +100,7 @@ python main.py
 ## 🤖 Mini-Agent Local Model Usage Guide
 
 ![Mini-Agent CLI](docs/images/mini_agent_cli.png)
+![Mini-Agent Skills](docs/images/skill-mini-agent.png)
 
 `Mini-Agent` is a lightweight agent framework integrated in the `Mini-Agent-main/` directory. We have extensively modified it to support locally deployed models like Qwen and to handle complex internal SSL environments.
 
@@ -108,9 +110,7 @@ Navigate to the `Mini-Agent-main` directory and install the required dependencie
 
 ```bash
 cd Mini-Agent-main
-# Recommended: using uv to install in current environment
-uv pip install -e .
-# Or sync full development environment
+# Recommended: using uv
 uv sync
 # Or using pip
 pip install -e .
@@ -164,6 +164,14 @@ uv run python -m mini_agent.cli
 ```
 
 Inside the CLI, you can use the `/skill` command to list all available Claude Skills.
+
+### 5. Latest Improvements (Jan 19, 2026)
+
+We have recently upgraded the Mini-Agent with several developer-centric features:
+- **Planning-First Workflow**: Forced the agent to write a structured TODO list before executing complex tasks to improve reliability.
+- **Verbose Debug Mode**: Added a `--verbose` flag and internal logging to track token estimation, message history length, and real-time status (e.g., "Waiting for LLM").
+- **Custom Testing Entry (`main.py`)**: Introduced a dedicated `main.py` in the `Mini-Agent-main` directory for flexible, general-purpose agent testing with custom prompts and environment setups.
+- **GAIA Benchmark Integration**: Added comprehensive GAIA evaluation support with detailed logging (see [`mini-agent.log`](./docs/ref_log/mini-agent.log)), enabling systematic performance measurement and debugging.
 
 ## 🧰 DeepAgents CLI Installation Guide
 

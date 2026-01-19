@@ -53,12 +53,14 @@ class Agent:
         max_steps: int = 50,
         workspace_dir: str = "./workspace",
         token_limit: int = 80000,  # Summary triggered when tokens exceed this value
+        verbose: bool = False,
     ):
         self.llm = llm_client
         self.tools = {tool.name: tool for tool in tools}
         self.max_steps = max_steps
         self.token_limit = token_limit
         self.workspace_dir = Path(workspace_dir)
+        self.verbose = verbose
         # Cancellation event for interrupting agent execution (set externally, e.g., by Esc key)
         self.cancel_event: Optional[asyncio.Event] = None
 
@@ -179,23 +181,17 @@ class Agent:
 
     async def _summarize_messages(self):
         """Message history summarization: summarize conversations between user messages when tokens exceed limit
-
-        Strategy (Agent mode):
-        - Keep all user messages (these are user intents)
-        - Summarize content between each user-user pair (agent execution process)
-        - If last round is still executing (has agent/tool messages but no next user), also summarize
-        - Structure: system -> user1 -> summary1 -> user2 -> summary2 -> user3 -> summary3 (if executing)
-
-        Summary is triggered when EITHER:
-        - Local token estimation exceeds limit
-        - API reported total_tokens exceeds limit
         """
         # Skip check if we just completed a summary (wait for next LLM call to update api_total_tokens)
         if self._skip_next_token_check:
             self._skip_next_token_check = False
             return
 
+        if self.verbose:
+            print(f"{Colors.DIM}   [Debug] _summarize_messages: Estimating tokens...{Colors.RESET}")
         estimated_tokens = self._estimate_tokens()
+        if self.verbose:
+            print(f"{Colors.DIM}   [Debug] _summarize_messages: Estimated {estimated_tokens} tokens{Colors.RESET}")
 
         # Check both local estimation and API reported tokens
         should_summarize = estimated_tokens > self.token_limit or self.api_total_tokens > self.token_limit
@@ -349,6 +345,10 @@ Requirements:
                 return cancel_msg
 
             step_start_time = perf_counter()
+            
+            if self.verbose:
+                print(f"{Colors.DIM}   [Debug] Checking message history and tokens...{Colors.RESET}")
+                
             # Check and summarize message history to prevent context overflow
             await self._summarize_messages()
 
@@ -368,8 +368,16 @@ Requirements:
             # Log LLM request and call LLM with Tool objects directly
             self.logger.log_request(messages=self.messages, tools=tool_list)
 
+            if self.verbose:
+                est_tokens = self._estimate_tokens()
+                print(f"{Colors.DIM}   [Debug] Context: {len(self.messages)} messages, ~{est_tokens} tokens{Colors.RESET}")
+
+            print(f"{Colors.DIM}   Waiting for LLM ({self.llm.model})...{Colors.RESET}", end="\r")
+
             try:
                 response = await self.llm.generate(messages=self.messages, tools=tool_list)
+                # Clear the waiting message
+                print(" " * 70, end="\r")
             except Exception as e:
                 # Check if it's a retry exhausted error
                 from .retry import RetryExhaustedError

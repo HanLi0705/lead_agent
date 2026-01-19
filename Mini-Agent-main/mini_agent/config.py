@@ -126,6 +126,8 @@ class Config(BaseModel):
             provider=data.get("provider", "anthropic"),
             verify=data.get("verify", True),
             ssl_ca_path=data.get("ssl_ca_path"),
+            temperature=data.get("temperature", 0.0),
+            max_tokens=data.get("max_tokens", 4096),
             retry=retry_config,
         )
 

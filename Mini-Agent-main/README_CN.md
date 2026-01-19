@@ -198,10 +198,7 @@ workspace_dir: "./workspace"
 # 方式 1：作为模块直接运行（适合调试）
 uv run python -m mini_agent.cli
 
-# 方式 2：在当前环境中以可编辑模式安装（推荐）
-uv pip install -e .
-
-# 方式 3：作为全局工具以可编辑模式安装
+# 方式 2：以可编辑模式安装（推荐）
 uv tool install -e .
 # 安装后，您可以在任何路径下运行，且代码更改会立即生效
 mini-agent
