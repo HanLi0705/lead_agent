@@ -108,7 +108,9 @@ Navigate to the `Mini-Agent-main` directory and install the required dependencie
 
 ```bash
 cd Mini-Agent-main
-# Recommended: using uv
+# Recommended: using uv to install in current environment
+uv pip install -e .
+# Or sync full development environment
 uv sync
 # Or using pip
 pip install -e .

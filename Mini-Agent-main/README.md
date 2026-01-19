@@ -198,7 +198,10 @@ Choose your preferred run method:
 # Method 1: Run as module directly (good for debugging)
 uv run python -m mini_agent.cli
 
-# Method 2: Install in editable mode (recommended)
+# Method 2: Install in current environment in editable mode (recommended)
+uv pip install -e .
+
+# Method 3: Install as a global tool in editable mode
 uv tool install -e .
 # After installation, run from anywhere and code changes take effect immediately
 mini-agent
